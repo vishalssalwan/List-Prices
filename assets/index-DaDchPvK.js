@@ -216,31 +216,75 @@ Error generating stack: `+f.message+`
         .export-btn:hover { background: #10b981; color: #fff; }
 
         @media (max-width: 768px) {
-          .container { padding: 1.5rem; }
-          .navbar { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
-          .nav-actions { width: 100%; justify-content: center; }
-          .logo { font-size: 1.5rem; }
+          .container { padding: 1rem; width: 100%; max-width: 100vw; overflow-x: hidden; }
+          .navbar { padding: 1rem; flex-direction: row; justify-content: space-between; position: sticky; top: 0; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(15px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+          .nav-actions { gap: 0.5rem; }
+          .logo { font-size: 1.2rem; }
+          .sync-info { display: none; }
           
-          .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
-          .results-header { padding: 2rem; flex-direction: column; text-align: center; gap: 2rem; }
-          .ref-side h3 { font-size: 1.8rem; justify-content: center; }
-          .price-tag-massive { flex-direction: column; align-items: center; text-align: center; gap: 5px; }
-          .price-current .num { font-size: 3.5rem; }
-          .ref-strike { margin: 0; font-size: 1.4rem; }
+          .grid-3 { grid-template-columns: 1fr; gap: 0.8rem; }
+          .input-card { padding: 1.2rem; margin-bottom: 1.5rem; border-radius: 20px; }
+          
+          .tab-switcher { padding: 0.4rem; margin-bottom: 2rem; }
+          
+          /* Hero Header for Mobile */
+          .results-header { padding: 2rem 1.5rem; flex-direction: column; text-align: center; gap: 1.5rem; border-radius: 0 0 30px 30px; margin: -1rem -1rem 2rem -1rem; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+          .ref-side h3 { font-size: 1.6rem; line-height: 1.2; flex-direction: column; gap: 8px; }
+          .ref-sub-details { justify-content: center; font-size: 0.8rem; }
+          
+          .price-tag-massive { flex-direction: column; align-items: center; text-align: center; gap: 0px; }
+          .price-current .num { font-size: 3.2rem; letter-spacing: -2px; }
+          .price-current .cur { font-size: 1.4rem; margin-top: 4px; }
+          .ref-strike { margin: 0; font-size: 1.3rem; margin-bottom: -5px; opacity: 0.4; }
 
-          /* Table to Card Transformation */
+          /* Premium Cards for Analysis Table */
+          .analysis-table, .analysis-table tbody, .analysis-table tr, .analysis-table td { display: block; width: 100%; }
           .analysis-table thead { display: none; }
-          .analysis-table tr { display: block; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1.5rem 0; }
-          .analysis-table td { display: block; padding: 0.5rem 0; border: none; text-align: left !important; }
           
-          .brand-cell { align-items: flex-start; }
-          .brand-title { font-size: 1.4rem; }
-          .massive-price { align-items: flex-start; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; width: 100%; }
-          .price-main .amt { font-size: 2rem; }
+          .analysis-table tr { 
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+          }
           
-          .match-pill-large { width: 100%; margin-top: 1rem; padding: 1rem; border-radius: 12px; }
+          .analysis-table td { padding: 0 !important; border: none !important; margin-bottom: 1rem; }
+          .analysis-table td:last-child { margin-bottom: 0; }
           
-          .export-btn { padding: 1.5rem; font-size: 1rem; }
+          .brand-cell { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; margin-bottom: 1rem; }
+          .brand-title { font-size: 1.6rem; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+          
+          .massive-price { 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 16px; 
+            padding: 1.2rem; 
+            align-items: center; 
+            border: 1px solid rgba(255,255,255,0.03);
+          }
+          .price-main .amt { font-size: 2.4rem; letter-spacing: -1px; }
+          .price-diff { font-size: 0.85rem; margin-top: 5px; font-weight: 900; }
+          
+          .match-pill-large { 
+            width: 100%; 
+            flex-direction: row; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1rem 1.5rem; 
+            border-radius: 16px; 
+            background: rgba(16, 185, 129, 0.08);
+          }
+          .match-pill-large .val { font-size: 1.6rem; line-height: 1; }
+          .match-pill-large .lab { font-size: 0.75rem; text-align: right; letter-spacing: 0.5px; opacity: 0.8; font-weight: 900; }
+          
+          .export-btn { margin-top: 1rem; border-radius: 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+          
+          /* Badges on mobile */
+          .subtle-badge { font-size: 0.55rem; padding: 3px 8px; }
+          .brand-top-row { flex-wrap: wrap; }
         }
 
         .calc-view { background: rgba(15, 23, 42, 0.6); padding: 3rem; border-radius: 32px; border: 1px solid rgba(255,255,255,0.05); }
