@@ -215,6 +215,34 @@ Error generating stack: `+f.message+`
         .export-btn { width: 100%; background: transparent; color: #64748b; border: none; padding: 1.25rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
         .export-btn:hover { background: #10b981; color: #fff; }
 
+        @media (max-width: 768px) {
+          .container { padding: 1.5rem; }
+          .navbar { padding: 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+          .nav-actions { width: 100%; justify-content: center; }
+          .logo { font-size: 1.5rem; }
+          
+          .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+          .results-header { padding: 2rem; flex-direction: column; text-align: center; gap: 2rem; }
+          .ref-side h3 { font-size: 1.8rem; justify-content: center; }
+          .price-tag-massive { flex-direction: column; align-items: center; text-align: center; gap: 5px; }
+          .price-current .num { font-size: 3.5rem; }
+          .ref-strike { margin: 0; font-size: 1.4rem; }
+
+          /* Table to Card Transformation */
+          .analysis-table thead { display: none; }
+          .analysis-table tr { display: block; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1.5rem 0; }
+          .analysis-table td { display: block; padding: 0.5rem 0; border: none; text-align: left !important; }
+          
+          .brand-cell { align-items: flex-start; }
+          .brand-title { font-size: 1.4rem; }
+          .massive-price { align-items: flex-start; margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 12px; width: 100%; }
+          .price-main .amt { font-size: 2rem; }
+          
+          .match-pill-large { width: 100%; margin-top: 1rem; padding: 1rem; border-radius: 12px; }
+          
+          .export-btn { padding: 1.5rem; font-size: 1rem; }
+        }
+
         .calc-view { background: rgba(15, 23, 42, 0.6); padding: 3rem; border-radius: 32px; border: 1px solid rgba(255,255,255,0.05); }
         .calc-input { max-width: 450px; margin: 0 auto 3rem; text-align: center; }
         .calc-input input { width: 100%; padding: 1.5rem; background: #000; color: #fff; border: 2px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 2.2rem; font-weight: 900; margin-bottom: 1.5rem; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
