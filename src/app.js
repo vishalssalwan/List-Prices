@@ -17,6 +17,9 @@ app.use(morgan('dev'));
 // app.use(express.static('dist'));
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('List Price Engine API is running. Access endpoints via /api');
+});
 app.use('/api', priceRoutes);
 
 // Health Check

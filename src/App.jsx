@@ -103,9 +103,9 @@ function App() {
 
       // Assuming axios is imported or available globally, as per the provided change.
       // If not, this line will cause an error.
-      const response = await fetch(`${API_URL}/auth?email=${encodeURIComponent(email)}`);
+      const response = await fetch(`${API_URL}/auth?email=${encodeURIComponent(email)}&t=${Date.now()}`);
       
-      if (!response.ok) throw new Error("Auth server unreachable.");
+      if (!response.ok && response.status !== 304) throw new Error("Auth server unreachable.");
 
       const { authorized, role } = await response.json();
 
@@ -120,7 +120,8 @@ function App() {
       } else {
         setAuthError('Email not authorized for access.');
       }
-    } catch {
+    } catch (err) {
+      console.error("Auth Error:", err);
       setAuthError("Auth sync failed. Try again.");
     } finally {
       setIsAuthChecking(false);
