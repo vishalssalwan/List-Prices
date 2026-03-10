@@ -8,10 +8,10 @@ import {
 } from 'lucide-react';
 
 const getApiUrl = () => {
-    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? "http://localhost:4000/api" 
-        : "https://list-prices.onrender.com/api";
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? "http://localhost:4000/api"
+    : "https://list-prices.onrender.com/api";
 };
 const API_URL = getApiUrl();
 
@@ -110,7 +110,7 @@ function App() {
       // Assuming axios is imported or available globally, as per the provided change.
       // If not, this line will cause an error.
       const response = await fetch(`${API_URL}/auth?email=${encodeURIComponent(email)}&t=${Date.now()}`);
-      
+
       if (!response.ok && response.status !== 304) throw new Error("Auth server unreachable.");
 
       const { authorized, role } = await response.json();
@@ -207,7 +207,13 @@ function App() {
         }
       }
     } catch (err) {
-      setError("Sync failed: Backend connection error.");
+      console.error("Fetch/Sync Error:", err);
+      if (!Object.keys(makesData).length) {
+        setError("Sync failed: Backend connection error.");
+      } else {
+        // Just a subtle notification if data already exists
+        console.warn("Sync failed, keeping existing data.");
+      }
     } finally {
       setLoading(false);
     }
@@ -338,7 +344,7 @@ function App() {
     const lookupDiscount = (row) => {
       let baseDiscount = 0;
       let matchedIdx = -1;
-      
+
       const idx = discountRules.findIndex(rule => {
         const rowVal = (k) => String(getVal(row, k) || '').toUpperCase().trim();
         const ruleVal = (k) => String(getVal(rule._raw, k) || '').toUpperCase().trim();
@@ -356,8 +362,8 @@ function App() {
         const rowSub = String(row._subCategory || '').toUpperCase();
         const rowSheet = String(row._sheet || '').toUpperCase();
 
-        const pMatch = !ruleVal('PRODUCT') || 
-          ruleVal('PRODUCT') === 'ALL' || 
+        const pMatch = !ruleVal('PRODUCT') ||
+          ruleVal('PRODUCT') === 'ALL' ||
           ruleVal('PRODUCT').split(',').some(p => {
             const up = normalize(p);
             const rC = normalize(rowCat);
@@ -470,19 +476,19 @@ function App() {
     }).sort((a, b) => a.net - b.net);
 
     const totalDiscsLoaded = Object.keys(discounts).length;
-    
-    return { 
-      refNet, 
-      brands, 
-      refLp: refMotor['List Price'] || 0, 
-      refMotor, 
-      refDiscount: refDisc, 
-      debug: { 
-        base: refDisc, 
-        rules: discountRules.length, 
+
+    return {
+      refNet,
+      brands,
+      refLp: refMotor['List Price'] || 0,
+      refMotor,
+      refDiscount: refDisc,
+      debug: {
+        base: refDisc,
+        rules: discountRules.length,
         fallbackCount: totalDiscsLoaded,
-        matchedIdx: refLookup.idx !== -1 ? refLookup.idx + 1 : 'FB' 
-      } 
+        matchedIdx: refLookup.idx !== -1 ? refLookup.idx + 1 : 'FB'
+      }
     };
   }, [referenceMake, referenceVariant, filters, activeCategory, makesData, discounts, discountRules, masterOptions, getAdjustedPrice]);
 
@@ -638,13 +644,13 @@ function App() {
                 <span className={`sync-dot ${loading ? 'busy' : ''}`} />
                 {loading ? 'Crunching Sheets...' : `Last Sync: ${lastRefreshed ? new Date(lastRefreshed).toLocaleTimeString() : 'Refreshing...'}`}
               </div>
-              <button 
-                className={`nav-btn ${loading ? 'spinning' : ''}`} 
-                onClick={async () => { 
+              <button
+                className={`nav-btn ${loading ? 'spinning' : ''}`}
+                onClick={async () => {
                   if (loading) return;
-                  localStorage.clear(); 
+                  localStorage.clear();
                   await fetchData();
-                }} 
+                }}
                 title="Force Hard Synchronize"
                 disabled={loading}
               >
@@ -847,7 +853,7 @@ function App() {
                                 <span className="cur">₹</span>
                                 <div className="price-stack">
                                   <span className="num">{Math.round(comparisonData.refNet).toLocaleString('en-IN')}</span>
-                                  <span className="lab">NET TOTAL {userRole === 'admin' && <span style={{fontSize: '0.6rem', opacity: 0.5}}> (B:{Math.round(comparisonData.debug.base * 100) / 100}% D:{comparisonData.debug.matchedIdx})</span>}</span>
+                                  <span className="lab">NET TOTAL {userRole === 'admin' && <span style={{ fontSize: '0.6rem', opacity: 0.5 }}> (B:{Math.round(comparisonData.debug.base * 100) / 100}% D:{comparisonData.debug.matchedIdx})</span>}</span>
                                 </div>
                               </div>
                             </div>
