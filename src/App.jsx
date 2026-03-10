@@ -7,7 +7,13 @@ import {
   Lock, Mail, ChevronRight, LogOut, ShieldCheck
 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? "http://localhost:4000/api" : "https://list-prices.onrender.com/api");
+const getApiUrl = () => {
+    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? "http://localhost:4000/api" 
+        : "https://list-prices.onrender.com/api";
+};
+const API_URL = getApiUrl();
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
