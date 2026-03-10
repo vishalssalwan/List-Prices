@@ -1523,9 +1523,11 @@ function App() {
         .header-main-row { flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; }
         .ref-side h3 { font-size: 2rem; }
         .price-tag-massive { width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; justify-content: center; }
-        .ref-spec-bar { padding-top: 1rem; }
-        .header-badge { min-width: 0; flex: 1; padding: 0.6rem; border-radius: 12px; }
-        .badge-val { font-size: 0.85rem; }
+        .ref-spec-bar { padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); }
+        .ref-spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+        .header-badge { min-width: 0; flex: none; padding: 0.8rem; border-radius: 16px; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); align-items: flex-start; text-align: left; height: auto; }
+        .badge-lab { font-size: 0.5rem; margin-bottom: 2px; }
+        .badge-val { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* Transform table to cards */
         .analysis-table, .analysis-table thead, .analysis-table tbody, .analysis-table tr, .analysis-table th, .analysis-table td { display: block; width: 100%; }
@@ -1558,6 +1560,10 @@ function App() {
         .ref-side h3 { font-size: 1.5rem; }
         .input-card { padding: 1.25rem; border-radius: 20px; }
         .pill-grid { grid-template-columns: repeat(2, 1fr); max-height: 200px; }
+        .ref-spec-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .header-badge { padding: 0.6rem; border-radius: 12px; }
+        .badge-val { font-size: 0.8rem; }
+        .ref-side h3 { font-size: 1.8rem; }
       }
         }
 
