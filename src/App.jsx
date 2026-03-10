@@ -873,7 +873,10 @@ function App() {
                                   key={fk}
                                   onClick={(e) => { e.stopPropagation(); setActivePillField(activePillField === fk ? null : fk); }}
                                 >
-                                  <span className="badge-lab">{fk} <ChevronRight size={10} className="edit-chevron" /></span>
+                                  <span className="badge-lab">
+                                    {fk === 'Efficiency' ? 'EFF' : fk === 'Application' ? 'APP' : fk === 'Duty Type' ? 'DUTY' : fk}
+                                    <ChevronRight size={10} className="edit-chevron" />
+                                  </span>
                                   <span className="badge-val">{Array.isArray(filters[fk]) ? filters[fk].join(', ') : filters[fk]}</span>
 
                                   {activePillField === fk && (
@@ -1310,38 +1313,54 @@ function App() {
       .ref-side h3 {font-size: 2.8rem; font-weight: 900; display: flex; align-items: center; gap: 15px; letter-spacing: -1.5px; line-height: 1; color: #fff; margin: 0; }
       .ref-disc-badge {font-size: 0.75rem; background: rgba(99, 102, 241, 0.15); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.3); font-weight: 900; color: #a5b4fc; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-      .ref-spec-bar { padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); position: relative; margin-top: 1rem; width: 100%; overflow: hidden; }
+      .ref-spec-bar { 
+        padding-top: 1.5rem; 
+        border-top: 1px solid rgba(255,255,255,0.05); 
+        position: relative; 
+        margin-top: 1.5rem; 
+        width: 100%; 
+        overflow: hidden; 
+      }
+      /* Added gradients for scroll hint */
+      .ref-spec-bar::after { content: ''; position: absolute; right: 0; top: 1.5rem; bottom: 0; width: 40px; background: linear-gradient(to left, #0f172a, transparent); pointer-events: none; z-index: 5; }
+      .ref-spec-bar::before { content: ''; position: absolute; left: 0; top: 1.5rem; bottom: 0; width: 40px; background: linear-gradient(to right, #0f172a, transparent); pointer-events: none; z-index: 5; opacity: 0; transition: 0.3s; }
+      
       .ref-spec-grid { 
-        display: flex; 
-        flex-wrap: nowrap; 
+        display: flex !important; 
+        flex-wrap: nowrap !important; 
         gap: 0.75rem; 
         width: 100%; 
-        overflow-x: auto; 
-        padding: 5px 10px 15px; 
-        scrollbar-width: thin;
-        scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+        overflow-x: auto !important; 
+        padding: 0.5rem 2rem 1.5rem; 
+        scrollbar-width: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-x: contain;
       }
+      .ref-spec-grid::-webkit-scrollbar { height: 6px; }
+      .ref-spec-grid::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+      .ref-spec-grid::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+      
       .header-badge {
-        background: rgba(255,255,255,0.04);
-        padding: 0.5rem 1.25rem;
-        border-radius: 100px;
+        background: rgba(255,255,255,0.05) !important;
+        padding: 0.6rem 1.5rem !important;
+        border-radius: 200px !important; /* Force pill shape */
         display: flex;
         flex-direction: column;
-        border: 1px solid rgba(255,255,255,0.08);
-        flex: 0 0 auto;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        flex: 0 0 auto !important;
         min-width: 110px;
         backdrop-filter: blur(10px);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
+        text-align: center;
       }
-      .header-badge.al {border-color: rgba(34, 211, 238, 0.4); background: rgba(34, 211, 238, 0.1); }
-      .header-badge.ci {border-color: rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.1); }
-      .badge-lab { font-size: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; font-weight: 950; margin-bottom: 2px; color: #fff; display: flex; align-items: center; gap: 4px; }
-      .badge-val { font-size: 0.9rem; font-weight: 900; color: #fff; line-height: 1.1; }
-      .header-badge.interactive:hover { border-color: #6366f1; background: rgba(99, 102, 241, 0.15); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 10px rgba(99, 102, 241, 0.2); }
-      .header-badge.editing { border-color: #6366f1; background: rgba(99, 102, 241, 0.25); z-index: 1001; box-shadow: 0 0 30px rgba(99, 102, 241, 0.3); }
+      .header-badge.al {border-color: rgba(34, 211, 238, 0.4) !important; background: rgba(34, 211, 238, 0.1) !important; }
+      .header-badge.ci {border-color: rgba(248, 113, 113, 0.4) !important; background: rgba(248, 113, 113, 0.1) !important; }
+      .badge-lab { font-size: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; font-weight: 950; margin-bottom: 2px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 4px; }
+      .badge-val { font-size: 0.85rem; font-weight: 900; color: #fff; line-height: 1.1; white-space: nowrap; }
+      .header-badge.interactive:hover { border-color: #6366f1 !important; background: rgba(99, 102, 241, 0.15) !important; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+      .header-badge.editing { border-color: #6366f1 !important; background: rgba(99, 102, 241, 0.25) !important; z-index: 1001; }
       .edit-chevron { opacity: 0.4; transition: 0.3s; color: #818cf8; font-size: 0.6rem; }
 
       .pill-dropdown-overlay {position: fixed; inset: 0; z-index: 1000; background: transparent; }
@@ -1536,12 +1555,11 @@ function App() {
         .header-main-row { flex-direction: column; align-items: center; text-align: center; gap: 1.5rem; }
         .ref-side h3 { font-size: 2rem; }
         .price-tag-massive { width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; justify-content: center; }
-        .ref-spec-bar { padding: 1rem 0; border-top: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; width: 100%; }
-        .ref-spec-bar::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(to left, rgba(15, 23, 42, 0.8), transparent); pointer-events: none; }
-        .ref-spec-grid { display: flex; flex-wrap: nowrap; gap: 10px; width: 100%; overflow-x: auto; padding: 5px 40px 10px 10px; scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.3) transparent; -webkit-overflow-scrolling: touch; }
-        .header-badge { flex: 0 0 auto; min-width: 120px; padding: 0.6rem 1.2rem; border-radius: 100px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); align-items: center; text-align: center; }
-        .badge-lab { font-size: 0.5rem; margin-bottom: 1px; justify-content: center; }
-        .badge-val { font-size: 0.85rem; width: 100%; overflow: visible; text-overflow: clip; }
+        .ref-spec-bar { padding: 1.25rem 0; border-top: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; width: 100%; }
+        .ref-spec-grid { display: flex !important; flex-wrap: nowrap !important; gap: 10px; width: 100%; overflow-x: auto !important; padding: 0.5rem 1rem 1rem; scrollbar-width: auto; -webkit-overflow-scrolling: touch; }
+        .header-badge { flex: 0 0 auto !important; min-width: 100px; padding: 0.5rem 1rem !important; border-radius: 200px !important; }
+        .badge-lab { font-size: 0.45rem; margin-bottom: 1px; }
+        .badge-val { font-size: 0.75rem; }
 
         /* Transform table to cards */
         .analysis-table, .analysis-table thead, .analysis-table tbody, .analysis-table tr, .analysis-table th, .analysis-table td { display: block; width: 100%; }
