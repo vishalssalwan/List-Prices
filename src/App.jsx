@@ -1310,8 +1310,19 @@ function App() {
       .ref-side h3 {font-size: 2.8rem; font-weight: 900; display: flex; align-items: center; gap: 15px; letter-spacing: -1.5px; line-height: 1; color: #fff; margin: 0; }
       .ref-disc-badge {font-size: 0.75rem; background: rgba(99, 102, 241, 0.15); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(99, 102, 241, 0.3); font-weight: 900; color: #a5b4fc; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-      .ref-spec-bar { padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); position: relative; margin-top: 1rem; }
-      .ref-spec-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; width: 100%; transition: 0.3s; }
+      .ref-spec-bar { padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); position: relative; margin-top: 1rem; width: 100%; overflow: hidden; }
+      .ref-spec-grid { 
+        display: flex; 
+        flex-wrap: nowrap; 
+        gap: 0.75rem; 
+        width: 100%; 
+        overflow-x: auto; 
+        padding: 5px 10px 15px; 
+        scrollbar-width: thin;
+        scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
       .header-badge {
         background: rgba(255,255,255,0.04);
         padding: 0.5rem 1.25rem;
@@ -1319,11 +1330,11 @@ function App() {
         display: flex;
         flex-direction: column;
         border: 1px solid rgba(255,255,255,0.08);
+        flex: 0 0 auto;
         min-width: 110px;
         backdrop-filter: blur(10px);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
-        overflow: hidden;
       }
       .header-badge.al {border-color: rgba(34, 211, 238, 0.4); background: rgba(34, 211, 238, 0.1); }
       .header-badge.ci {border-color: rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.1); }
@@ -1527,9 +1538,8 @@ function App() {
         .price-tag-massive { width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; justify-content: center; }
         .ref-spec-bar { padding: 1rem 0; border-top: 1px solid rgba(255,255,255,0.08); overflow: hidden; position: relative; width: 100%; }
         .ref-spec-bar::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(to left, rgba(15, 23, 42, 0.8), transparent); pointer-events: none; }
-        .ref-spec-grid { display: flex; flex-wrap: nowrap; gap: 10px; width: 100%; overflow-x: auto; padding: 5px 40px 10px 10px; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
-        .ref-spec-grid::-webkit-scrollbar { display: none; }
-        .header-badge { min-width: 120px; flex-shrink: 0; padding: 0.6rem 1.2rem; border-radius: 100px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); align-items: center; text-align: center; }
+        .ref-spec-grid { display: flex; flex-wrap: nowrap; gap: 10px; width: 100%; overflow-x: auto; padding: 5px 40px 10px 10px; scrollbar-width: thin; scrollbar-color: rgba(99, 102, 241, 0.3) transparent; -webkit-overflow-scrolling: touch; }
+        .header-badge { flex: 0 0 auto; min-width: 120px; padding: 0.6rem 1.2rem; border-radius: 100px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); align-items: center; text-align: center; }
         .badge-lab { font-size: 0.5rem; margin-bottom: 1px; justify-content: center; }
         .badge-val { font-size: 0.85rem; width: 100%; overflow: visible; text-overflow: clip; }
 
