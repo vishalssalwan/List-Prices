@@ -146,6 +146,8 @@ const ComparisonResults = ({
                         <thead className="comparison-table-header">
                             <tr style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                 <th style={{ textAlign: 'left', padding: '1rem 1.5rem' }}>Manufacturer / Specifications</th>
+                                {userRole === 'admin' && <th style={{ textAlign: 'center', padding: '1rem' }}>List Price</th>}
+                                {userRole === 'admin' && <th style={{ textAlign: 'center', padding: '1rem' }}>Discount</th>}
                                 <th style={{ textAlign: 'center', padding: '1rem' }}>Net Price (INR)</th>
                                 {userRole === 'admin' && <th style={{ textAlign: 'center', padding: '1rem' }}>To Match Gap</th>}
                             </tr>
@@ -161,6 +163,7 @@ const ComparisonResults = ({
                                         </div>
                                         <div className="brand-specs" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                                             {Object.keys(fieldConfig).map(k => {
+                                                if (k === 'List Price' && userRole !== 'admin') return null;
                                                 if ((fieldConfig[k] === 'display' || (k === 'Model' && activeCategory === 'Gearboxes')) && comparisonData.refMotor[k]) {
                                                     return (
                                                         <span key={k} style={{ background: 'rgba(2, 6, 23, 0.4)', color: '#94a3b8', fontSize: '0.75rem', padding: '0.3rem 0.7rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
@@ -173,6 +176,16 @@ const ComparisonResults = ({
                                         </div>
                                     </div>
                                 </td>
+                                {userRole === 'admin' && (
+                                    <td data-label="List Price" style={{ textAlign: 'center', padding: '1.5rem', color: '#94a3b8', fontWeight: 600 }}>
+                                        {Math.round(comparisonData.refMotor['List Price']).toLocaleString('en-IN')}
+                                    </td>
+                                )}
+                                {userRole === 'admin' && (
+                                    <td data-label="Discount" style={{ textAlign: 'center', padding: '1.5rem', color: '#10b981', fontWeight: 600 }}>
+                                        {comparisonData.refDiscount}%
+                                    </td>
+                                )}
                                 <td data-label="Net Price (INR)" style={{ textAlign: 'center', padding: '1.5rem' }}>
                                     <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{Math.round(comparisonData.refNet).toLocaleString('en-IN')}</div>
                                     <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>BASELINE</div>
@@ -197,6 +210,7 @@ const ComparisonResults = ({
                                                 </div>
                                                 <div className="brand-specs" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                                                     {Object.keys(fieldConfig).map(k => {
+                                                        if (k === 'List Price' && userRole !== 'admin') return null;
                                                         if ((fieldConfig[k] === 'display' || (k === 'Model' && activeCategory === 'Gearboxes')) && b.rowRaw[k]) {
                                                             return (
                                                                 <span key={k} style={{ background: 'rgba(2, 6, 23, 0.4)', color: '#94a3b8', fontSize: '0.75rem', padding: '0.3rem 0.7rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
@@ -209,6 +223,16 @@ const ComparisonResults = ({
                                                 </div>
                                             </div>
                                         </td>
+                                        {userRole === 'admin' && (
+                                            <td data-label="List Price" style={{ textAlign: 'center', padding: '1.5rem', color: '#94a3b8', fontWeight: 600 }}>
+                                                {Math.round(b.lp).toLocaleString('en-IN')}
+                                            </td>
+                                        )}
+                                        {userRole === 'admin' && (
+                                            <td data-label="Discount" style={{ textAlign: 'center', padding: '1.5rem', color: '#10b981', fontWeight: 600 }}>
+                                                {b.discount}%
+                                            </td>
+                                        )}
                                         <td data-label="Net Price (INR)" style={{ textAlign: 'center', padding: '1.5rem' }}>
                                             <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{Math.round(b.net).toLocaleString('en-IN')}</div>
                                             <div style={{
