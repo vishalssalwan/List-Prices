@@ -24,12 +24,16 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
         const rProd = String(rule._raw?.PRODUCT || '').toUpperCase();
         const rBrand = String(rule._raw?.BRANDNAME || '').toUpperCase();
         const rMoc = String(rule._raw?.MOC || '').toUpperCase();
+        const rEff = String(rule._raw?.EFFICIENCY || '').toUpperCase();
+        const rDuty = String(rule._raw?.DUTYTYPE || '').toUpperCase();
         const rFrame = String(rule._raw?.FRAME_RANGE || '').toUpperCase().trim();
 
         const rowBrand = normalizeBrand(row.Brand || row.Make || row._sheet);
         const rowMoc = String(row.MOC || row.Material || 'CI').toUpperCase();
         const rowSheet = String(row._sheet || '').toUpperCase();
         const rowCat = String(row._category || '').toUpperCase();
+        const rowEff = String(row.Efficiency || row.EFFICIENCY || '').toUpperCase();
+        const rowDuty = String(row['Duty Type'] || row.DUTYTYPE || row.Duty || '').toUpperCase();
         const rowFrame = String(row.Frame || row.FRAME || row['Frame Size'] || '').toUpperCase();
 
         // Brand Match
@@ -43,6 +47,12 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
 
         // MOC Match
         const mocMatch = !rMoc || rMoc === 'ALL' || rMoc.split(',').some(m => m.trim() === rowMoc);
+
+        // Efficiency Match
+        const effMatch = !rEff || rEff === 'ALL' || rEff === rowEff;
+
+        // Duty Type Match
+        const dutyMatch = !rDuty || rDuty === 'ALL' || rDuty === rowDuty;
 
         // Frame Match
         let frameMatch = true;
@@ -77,7 +87,7 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
             }
         }
 
-        return brandMatch && productMatch && mocMatch && frameMatch;
+        return brandMatch && productMatch && mocMatch && effMatch && dutyMatch && frameMatch;
     });
 
     if (ruleIdx !== -1) {
