@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import * as XLSX from 'xlsx';
-import { AlertCircle, Search, RefreshCw, BarChart3, Info } from 'lucide-react';
+import { AlertCircle, Search, RefreshCw } from 'lucide-react';
 
 // Specialized Components
 import Navbar from './components/layout/Navbar';
@@ -8,8 +8,6 @@ import AuthWall from './components/auth/AuthWall';
 import CategorySwitcher from './components/selectors/CategorySwitcher';
 import FilterSystem from './components/selectors/FilterSystem';
 import ComparisonResults from './components/pricing/ComparisonResults';
-import { ConfigModal, SettingsModal } from './components/shared/Modals';
-
 // Custom Hooks & Services
 import { usePriceEngine } from './hooks/usePriceEngine';
 import { calculateComparison } from './services/pricingService';
@@ -44,8 +42,7 @@ function App() {
     fetchData, verifyAccess, logout, updateConfig, updateDiscount
   } = usePriceEngine();
 
-  const [showSettings, setShowSettings] = useState(false);
-  const [showConfig, setShowConfig] = useState(false);
+
   const [activeCategory, setActiveCategory] = useState('Motors');
   const [selectedType, setSelectedType] = useState('Standard');
   const [filters, setFilters] = useState({});
@@ -192,18 +189,6 @@ function App() {
             </div>
           )}
 
-          <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', display: 'flex', gap: '1rem' }}>
-            <button className="nav-btn pulse" onClick={() => setShowConfig(true)} title="Surcharge Config"><BarChart3 size={20} /></button>
-            <button className="nav-btn" onClick={() => setShowSettings(true)} title="Market Discounts"><Info size={20} /></button>
-          </div>
-
-          <ConfigModal showConfig={showConfig} setShowConfig={setShowConfig} config={config} updateConfig={updateConfig} />
-          <SettingsModal
-            showSettings={showSettings} setShowSettings={setShowSettings} makesData={makesData}
-            discounts={discounts} updateDiscount={updateDiscount} authEmail={authEmail}
-            userRole={userRole} logout={logout} discountsFromSheet={discountsFromSheet}
-            discountRules={discountRules}
-          />
         </main>
       )}
     </div>
