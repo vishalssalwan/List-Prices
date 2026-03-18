@@ -70,6 +70,7 @@ export const getPriceEngineData = async (req, res) => {
             else if (uH.includes('DUTY')) normKey = 'DUTYTYPE';
             else if (uH.includes('EFFICIENCY')) normKey = 'EFFICIENCY';
             else if (uH.includes('MOC') || uH.includes('MATERIAL')) normKey = 'MOC';
+            else if (uH.includes('FRAME') || uH === 'RANGE') normKey = 'FRAME_RANGE';
 
             if (val === null || val === undefined || String(val).trim() === '') val = lastValues[normKey];
             else { lastValues[normKey] = val; }

@@ -24,11 +24,13 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
         const rProd = String(rule._raw?.PRODUCT || '').toUpperCase();
         const rBrand = String(rule._raw?.BRANDNAME || '').toUpperCase();
         const rMoc = String(rule._raw?.MOC || '').toUpperCase();
+        const rFrame = String(rule._raw?.FRAME_RANGE || '').toUpperCase().trim();
 
         const rowBrand = normalizeBrand(row.Brand || row.Make || row._sheet);
         const rowMoc = String(row.MOC || row.Material || 'CI').toUpperCase();
         const rowSheet = String(row._sheet || '').toUpperCase();
         const rowCat = String(row._category || '').toUpperCase();
+        const rowFrame = String(row.Frame || '').toUpperCase();
 
         // Brand Match
         const brandMatch = !rBrand || rBrand === 'ALL' || normalizeBrand(rBrand) === rowBrand;
@@ -42,7 +44,35 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
         // MOC Match
         const mocMatch = !rMoc || rMoc === 'ALL' || rMoc.split(',').some(m => m.trim() === rowMoc);
 
-        return brandMatch && productMatch && mocMatch;
+        // Frame Match
+        let frameMatch = true;
+        if (rFrame && rFrame !== 'ALL' && rowFrame && rowCat === 'MOTORS') {
+            const frameNum = parseFloat(rowFrame.replace(/[^0-9.]/g, ''));
+            if (!isNaN(frameNum)) {
+                if (rFrame.includes('-')) {
+                    const parts = rFrame.split('-');
+                    const min = parseFloat(parts[0].replace(/[^0-9.]/g, ''));
+                    const max = parseFloat(parts[1].replace(/[^0-9.]/g, ''));
+                    if (!isNaN(min) && !isNaN(max)) {
+                        frameMatch = frameNum >= min && frameNum <= max;
+                    }
+                } else if (rFrame.startsWith('<=')) {
+                    frameMatch = frameNum <= parseFloat(rFrame.replace(/[^0-9.]/g, ''));
+                } else if (rFrame.startsWith('>=')) {
+                    frameMatch = frameNum >= parseFloat(rFrame.replace(/[^0-9.]/g, ''));
+                } else if (rFrame.startsWith('<')) {
+                    frameMatch = frameNum < parseFloat(rFrame.replace(/[^0-9.]/g, ''));
+                } else if (rFrame.startsWith('>')) {
+                    frameMatch = frameNum > parseFloat(rFrame.replace(/[^0-9.]/g, ''));
+                } else {
+                    frameMatch = frameNum === parseFloat(rFrame.replace(/[^0-9.]/g, ''));
+                }
+            } else {
+                frameMatch = rFrame === rowFrame;
+            }
+        }
+
+        return brandMatch && productMatch && mocMatch && frameMatch;
     });
 
     if (ruleIdx !== -1) {
