@@ -20,7 +20,7 @@ export const getPriceEngineData = async (req, res) => {
     // PHASE 1: PROCESS ALL DISCOUNT SHEETS FIRST
     sheetList.filter(s => s.sName.includes('DISCOUNT')).forEach(sheet => {
       const { name: sheetName, jsonData, sName } = sheet;
-      
+
       const findTables = (data) => {
         const tables = [];
         const headerRows = [];
@@ -261,12 +261,16 @@ export const getAuthorizedUsers = async (req, res) => {
         if (roleIdx !== -1 && String(row[roleIdx] || '').toUpperCase().trim() === 'ADMIN') {
           role = 'admin';
         }
+        // Capture Deviation
+        if (devIdx !== -1) {
+          discountDeviation = parseFloat(row[devIdx]) || 0;
+        }
         break;
       }
     }
 
     if (authorized) {
-      res.json({ authorized: true, role });
+      res.json({ authorized: true, role, deviation: discountDeviation });
     } else {
       res.json({ authorized: false });
     }
