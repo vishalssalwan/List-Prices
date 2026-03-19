@@ -1,0 +1,211 @@
+
+/* V2 Filter System Styles */
+
+:root {
+  --v2-bg: #0f172a;
+  --v2-card-bg: rgba(30, 41, 59, 0.5);
+  --v2-border: rgba(255, 255, 255, 0.08);
+  --v2-text-muted: #94a3b8;
+  --v2-text-bright: #f8fafc;
+  --v2-primary: #6366f1;
+  --v2-primary-glow: rgba(99, 102, 241, 0.2);
+}
+
+.filter-bar-v2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.4s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+.filter-card {
+  position: relative;
+  background: var(--v2-card-bg);
+  border: 1px solid var(--v2-border);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 54px;
+  min-width: 140px;
+  flex: 0 1 auto;
+}
+
+.filter-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-card.active {
+  border-color: var(--v2-primary);
+  background: rgba(99, 102, 241, 0.08); /* Slightly stronger active color */
+  box-shadow: 0 0 20px rgba(99,102,241,0.25);
+}
+
+.open.filter-card {
+  z-index: 2001; /* Ensure open card is above others */
+}
+
+.filter-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--v2-text-muted);
+  margin-bottom: 0.25rem;
+  pointer-events: none;
+}
+
+.filter-value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.filter-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--v2-text-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.filter-chevron {
+  color: var(--v2-text-muted);
+  transition: transform 0.2s;
+}
+
+.filter-card.open .filter-chevron {
+  transform: rotate(180deg);
+  color: var(--v2-primary);
+}
+
+/* Popover Content */
+.popover-container {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  z-index: 2000;
+  background: #111827; /* Darker background for better contrast */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  padding: 1rem 1.25rem;
+  min-width: 320px;
+  width: max-content;
+  max-width: 450px;
+  animation: popDown 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  backdrop-filter: blur(40px);
+}
+
+.popover-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom Scrollbar */
+.popover-grid::-webkit-scrollbar { width: 4px; }
+.popover-grid::-webkit-scrollbar-track { background: transparent; }
+.popover-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+.popover-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.popover-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.popover-item.active {
+  background: var(--v2-primary);
+  color: white;
+  border-color: transparent;
+}
+
+.popover-item.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Overlay for outside clicks - MOBILE ONLY */
+.popover-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 999;
+}
+
+@media (max-width: 768px) {
+  .popover-overlay {
+    display: block;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Animations */
+@keyframes popDown {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Mobile Bottom Sheet Styles */
+@media (max-width: 768px) {
+  .filter-bar-v2 {
+    grid-template-columns: 1fr 1fr;
+    padding: 0 0.5rem;
+  }
+
+  .popover-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .popover-container {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 1.5rem;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .popover-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

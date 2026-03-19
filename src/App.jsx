@@ -7,6 +7,7 @@ import Navbar from './components/layout/Navbar';
 import AuthWall from './components/auth/AuthWall';
 import CategorySwitcher from './components/selectors/CategorySwitcher';
 import FilterSystem from './components/selectors/FilterSystem';
+import FilterSystemV2 from './components/selectors/FilterSystemV2';
 import ComparisonResults from './components/pricing/ComparisonResults';
 // Custom Hooks & Services
 import { usePriceEngine } from './hooks/usePriceEngine';
@@ -49,6 +50,7 @@ function App() {
   const [referenceMake, setReferenceMake] = useState(null);
   const [referenceVariant, setReferenceVariant] = useState(null);
   const [activePillField, setActivePillField] = useState(null);
+  const [showV2, setShowV2] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [isAuthChecking, setIsAuthChecking] = useState(false);
   const [authEmailInput, setAuthEmailInput] = useState('');
@@ -154,17 +156,49 @@ function App() {
         <main className="container">
           {error && <div className="error-box"><AlertCircle size={20} /> {error}</div>}
 
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', gap: '1rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: showV2 ? 'var(--primary)' : '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              V2 Compact UI Beta
+            </span>
+            <button 
+              onClick={() => setShowV2(!showV2)}
+              style={{
+                background: showV2 ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                color: 'white',
+                border: '1px solid',
+                borderColor: showV2 ? 'transparent' : 'var(--glass-border)',
+                borderRadius: '20px',
+                padding: '0.4rem 1rem',
+                fontSize: '0.7rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: showV2 ? '0 0 15px rgba(99, 102, 241, 0.4)' : 'none'
+              }}
+            >
+              {showV2 ? 'SWITCH TO CLASSIC' : 'TRY NEW DESIGN'}
+            </button>
+          </div>
+
           <CategorySwitcher
             categories={masterOptions.categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}
             makesData={makesData} setSelectedType={setSelectedType} setFilters={setFilters}
             setReferenceMake={setReferenceMake} setReferenceVariant={setReferenceVariant}
           />
 
-          <FilterSystem
-            activeCategory={activeCategory} selectedType={selectedType} setSelectedType={setSelectedType}
-            masterOptions={masterOptions} filters={filters} setFilters={setFilters}
-            setReferenceMake={setReferenceMake} setReferenceVariant={setReferenceVariant}
-          />
+          {!showV2 ? (
+            <FilterSystem
+              activeCategory={activeCategory} selectedType={selectedType} setSelectedType={setSelectedType}
+              masterOptions={masterOptions} filters={filters} setFilters={setFilters}
+              setReferenceMake={setReferenceMake} setReferenceVariant={setReferenceVariant}
+            />
+          ) : (
+            <FilterSystemV2
+              activeCategory={activeCategory} selectedType={selectedType} setSelectedType={setSelectedType}
+              masterOptions={masterOptions} filters={filters} setFilters={setFilters}
+              setReferenceMake={setReferenceMake} setReferenceVariant={setReferenceVariant}
+            />
+          )}
 
           {referenceVariant ? (
             <ComparisonResults
