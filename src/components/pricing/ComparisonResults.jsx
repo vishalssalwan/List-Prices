@@ -17,26 +17,13 @@ const ComparisonResults = ({
     setReferenceVariant,
     referenceMake
 }) => {
-    const [openDropdown, setOpenDropdown] = useState(null);
-    const dropdownRef = useRef(null);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setOpenDropdown(null);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
     if (!comparisonData) return null;
 
     return (
         <div className="results-container fadeInUp" style={{ animation: 'fadeInUp 0.6s ease-out' }}>
             <div className="results-wrapper glass-panel" style={{ padding: '0' }}>
                 {/* Comparison Header / Baseline */}
-                <div className="results-header" style={{ padding: '2.5rem', borderBottom: '1px solid var(--glass-border)' }}>
+                <div className="results-header" style={{ padding: '2.5rem' }}>
                     <div className="header-main-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div className="ref-side">
                             <div className="ref-label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem' }}>
@@ -75,68 +62,6 @@ const ComparisonResults = ({
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="ref-grid" style={{
-                        marginTop: '2.5rem',
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                        gap: '0.75rem',
-                        width: '100%'
-                    }} ref={dropdownRef}>
-                        {Object.keys(filters).map(fk => (
-                            <div
-                                className="header-badge"
-                                key={fk}
-                                style={{
-                                    background: 'rgba(255,255,255,0.03)',
-                                    border: '1px solid var(--glass-border)',
-                                    padding: '0.6rem 1rem',
-                                    borderRadius: '12px',
-                                    fontSize: '0.85rem',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    position: 'relative'
-                                }}
-                            >
-                                <div
-                                    className="ref-dropdown-container"
-                                    onClick={() => setOpenDropdown(openDropdown === fk ? null : fk)}
-                                >
-                                    <span style={{ color: '#64748b', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.65rem' }}>{fk}</span>
-                                    <span className="ref-dropdown-value">
-                                        {filters[fk] || 'Select'}
-                                        <ChevronDown size={14} style={{ transform: openDropdown === fk ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-                                    </span>
-
-                                    {openDropdown === fk && (
-                                        <div className="ref-dropdown-menu">
-                                            {(masterOptions.criteria[fk] || [])
-                                                .filter(opt => masterOptions.available[fk]?.has(String(opt)))
-                                                .map(opt => (
-                                                    <div
-                                                        key={opt}
-                                                        className={`ref-dropdown-item ${filters[fk] === opt ? 'active' : ''}`}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            const next = { ...filters, [fk]: opt };
-                                                            setFilters(next);
-                                                            if (fk === 'Size') delete next['Indian Size'];
-                                                            if (fk === 'Indian Size') delete next['Size'];
-                                                            setReferenceMake(null);
-                                                            setReferenceVariant(null);
-                                                            setOpenDropdown(null);
-                                                        }}
-                                                    >
-                                                        {opt}
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
                     </div>
                 </div>
 

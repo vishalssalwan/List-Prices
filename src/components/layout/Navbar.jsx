@@ -10,7 +10,7 @@ const Navbar = ({
 }) => {
     return (
         <header className="navbar">
-            <div className="logo">Antigravity <span>PRO</span></div>
+            <div className="logo">BRSMART<span>-pro</span></div>
             <div className="nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 {isAuthenticated ? (
                     <>
