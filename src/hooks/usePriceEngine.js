@@ -1,12 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-
-const getApiUrl = () => {
-    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? "http://localhost:4000/api"
-        : "https://list-prices.onrender.com/api";
-};
-const API_URL = getApiUrl();
+import apiClient, { setAccessToken } from '../services/apiClient';
 
 export function usePriceEngine() {
     const [makesData, setMakesData] = useState({});
@@ -14,24 +7,26 @@ export function usePriceEngine() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [discounts, setDiscounts] = useState({});
-    const [config, setConfig] = useState({
-        profitMargin: 10
-    });
+    const [config, setConfig] = useState({ profitMargin: 10 });
     const [lastRefreshed, setLastRefreshed] = useState(null);
     const [discountRules, setDiscountRules] = useState([]);
     const [discountsFromSheet, setDiscountsFromSheet] = useState(false);
+    
+    // Auth State (Secure Memory-Only Tracking)
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authEmail, setAuthEmail] = useState('');
     const [userRole, setUserRole] = useState('user');
     const [userDeviation, setUserDeviation] = useState(0);
+    const [isAuthChecking, setIsAuthChecking] = useState(true); // Prevents UI flash before hydration
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch(`${API_URL}/data?t=${Date.now()}`);
-            if (!response.ok) throw new Error('API server unreachable.');
-            const data = await response.json();
+            
+            // Replaced fetch() with securely intercepted apiClient
+            const response = await apiClient.get(`/data?t=${Date.now()}`);
+            const data = response.data;
             const { makesData: apiData, fieldConfig: apiFields, sheetDiscounts, discountRules: apiRules, lastRefreshed: apiTime } = data;
 
             if (!apiData || Object.keys(apiData).length === 0) {
@@ -51,7 +46,9 @@ export function usePriceEngine() {
             }
         } catch (err) {
             console.error("Fetch Error:", err);
-            setError("Sync failed: Backend connection error.");
+            if (err.response?.status !== 401) {
+                setError("Sync failed: Backend connection error.");
+            }
         } finally {
             setLoading(false);
         }
@@ -59,29 +56,41 @@ export function usePriceEngine() {
 
     const verifyAccess = useCallback(async (email) => {
         try {
-            const res = await fetch(`${API_URL}/auth?email=${encodeURIComponent(email)}&t=${Date.now()}`);
-            const { authorized, role, deviation } = await res.json();
-            if (authorized) {
+            // Initiate standard Login request
+            const res = await apiClient.post(`/auth`, { email });
+            const { authorized, role, deviation, accessToken } = res.data;
+            
+            if (authorized && accessToken) {
+                setAccessToken(accessToken); // Store securely in JS memory scope
                 setIsAuthenticated(true);
                 setUserRole(role);
                 setAuthEmail(email);
                 setUserDeviation(deviation || 0);
+
+                // Remember email for caching/quality of life only, not for auth boundaries
                 localStorage.setItem('userEmail', email);
-                localStorage.setItem('userAuthenticated', 'true');
-                localStorage.setItem('userRole', role);
-                localStorage.setItem('userDeviation', String(deviation || 0));
+
                 fetchData();
                 return { success: true };
             } else {
                 return { success: false, error: 'Email not authorized.' };
             }
         } catch (err) {
+            if (err.response?.status === 401) {
+                 return { success: false, error: "Email not authorized." };
+            }
             return { success: false, error: "Auth sync failed. Try again." };
         }
     }, [fetchData]);
 
-    const logout = useCallback(() => {
-        localStorage.clear();
+    const logout = useCallback(async () => {
+        try {
+            // Signal server to invalidate and strip HttpOnly cookie
+            await apiClient.post('/auth/logout');
+        } catch (e) { /* ignore */ }
+        
+        setAccessToken(null);
+        localStorage.removeItem('userEmail'); // Erase QOL cache
         setIsAuthenticated(false);
         setAuthEmail('');
         setMakesData({});
@@ -103,29 +112,51 @@ export function usePriceEngine() {
         });
     }, []);
 
+    // Initial Subroutine: Hydration
     useEffect(() => {
-        const auth = localStorage.getItem('userAuthenticated');
-        const role = localStorage.getItem('userRole');
-        if (auth === 'true') {
-            setIsAuthenticated(true);
-            setUserRole(role || 'user');
-            setAuthEmail(localStorage.getItem('userEmail') || '');
-            setUserDeviation(parseFloat(localStorage.getItem('userDeviation') || '0'));
-            fetchData();
-        } else {
-            setLoading(false);
-        }
+        const attemptHydration = async () => {
+             try {
+                  // Transparently ping the refresh route. If the browser holds a valid HttpOnly cookie, it grants standard access
+                  const res = await apiClient.post('/auth/refresh');
+                  const { accessToken, email, role, deviation } = res.data;
+                  
+                  setAccessToken(accessToken);
+                  setIsAuthenticated(true);
+                  setUserRole(role || 'user');
+                  setAuthEmail(email);
+                  setUserDeviation(deviation || 0);
+                  localStorage.setItem('userEmail', email);
+                  
+                  // Secure session established: load actual product data
+                  fetchData();
+             } catch (err) {
+                  // No valid cookie, user is safely designated unauthenticated
+                  setIsAuthenticated(false);
+                  setLoading(false);
+             } finally {
+                  setIsAuthChecking(false);
+             }
+        };
+
+        attemptHydration();
 
         const savedDiscounts = localStorage.getItem('motorDiscounts_v4');
         const savedConfig = localStorage.getItem('motorConfig_v4');
         if (savedDiscounts) setDiscounts(JSON.parse(savedDiscounts));
         if (savedConfig) setConfig(prev => ({ ...prev, ...JSON.parse(savedConfig) }));
-    }, [fetchData]);
+
+        // Seamless Global Escaping Router Hook
+        const handleForceLogout = () => logout();
+        window.addEventListener('auth-expired', handleForceLogout);
+        return () => window.removeEventListener('auth-expired', handleForceLogout);
+        
+    }, [fetchData, logout]);
 
     return {
-        makesData, fieldConfig, loading, error, showSettings: false,
+        makesData, fieldConfig, loading: loading || isAuthChecking, error, showSettings: false,
         discounts, config, lastRefreshed, discountRules, discountsFromSheet,
         isAuthenticated, authEmail, userRole, userDeviation,
-        fetchData, verifyAccess, logout, updateConfig, updateDiscount
+        fetchData, verifyAccess, logout, updateConfig, updateDiscount,
+        isAuthChecking // Passed downward to tell UI we are still verifying initial auth cookie
     };
 }

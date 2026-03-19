@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import priceRoutes from './routes/priceRoutes.js';
 
 dotenv.config();
@@ -9,12 +10,13 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true // Crucial for accepting httpOnly secure refresh cookies
+}));
 app.use(express.json());
+app.use(cookieParser());
 app.use(morgan('dev'));
-
-// Static assets (if we want to serve front-end later)
-// app.use(express.static('dist'));
 
 // Routes
 app.get('/', (req, res) => {

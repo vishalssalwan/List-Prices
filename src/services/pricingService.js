@@ -19,6 +19,15 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
     let matchedDiscount = 0;
     let ruleIdx = -1;
 
+    // Lifted out of loop for massive performance gain -> O(1) row processing
+    const rowBrand = normalizeBrand(row.Brand || row.Make || row._sheet);
+    const rowMoc = String(row.MOC || row.Material || 'CI').toUpperCase();
+    const rowSheet = String(row._sheet || '').toUpperCase();
+    const rowCat = String(row._category || '').toUpperCase();
+    const rowEff = String(row.Efficiency || row.EFFICIENCY || '').toUpperCase();
+    const rowDuty = String(row['Duty Type'] || row.DUTYTYPE || row.Duty || '').toUpperCase();
+    const rowFrame = String(row.Frame || row.FRAME || row['Frame Size'] || '').toUpperCase();
+
     // 1. Try Matching Complex Rules
     ruleIdx = discountRules.findIndex(rule => {
         const rProd = String(rule._raw?.PRODUCT || '').toUpperCase();
@@ -27,14 +36,6 @@ export const lookupDiscount = (row, discountRules, staticDiscounts) => {
         const rEff = String(rule._raw?.EFFICIENCY || '').toUpperCase();
         const rDuty = String(rule._raw?.DUTYTYPE || '').toUpperCase();
         const rFrame = String(rule._raw?.FRAME_RANGE || '').toUpperCase().trim();
-
-        const rowBrand = normalizeBrand(row.Brand || row.Make || row._sheet);
-        const rowMoc = String(row.MOC || row.Material || 'CI').toUpperCase();
-        const rowSheet = String(row._sheet || '').toUpperCase();
-        const rowCat = String(row._category || '').toUpperCase();
-        const rowEff = String(row.Efficiency || row.EFFICIENCY || '').toUpperCase();
-        const rowDuty = String(row['Duty Type'] || row.DUTYTYPE || row.Duty || '').toUpperCase();
-        const rowFrame = String(row.Frame || row.FRAME || row['Frame Size'] || '').toUpperCase();
 
         // Brand Match
         const brandMatch = !rBrand || rBrand === 'ALL' || normalizeBrand(rBrand) === rowBrand;
